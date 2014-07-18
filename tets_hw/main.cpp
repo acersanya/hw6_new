@@ -1,5 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
-
+п»ї#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <stdio.h>
 #include <windows.h>
@@ -12,7 +11,27 @@ using namespace std;
  
 const int _maxLengthName = 21;
  
-//Структура для автобуса
+//&#323;&#328;&#273;Сѓ&#281;&#328;Сѓ&#273;&#341; РґР»&#729; &#341;РІ&#328;РѕР±Сѓ&#324;&#341;
+ 
+struct Tram {
+ int bus;
+    char *name;
+    char i;
+    char o;
+  int route;
+ 
+ 
+};
+ 
+struct Trolley {
+     int bus;
+    char *name;
+    char i;
+    char o;
+  int route;
+ 
+};
+ 
 struct Bus
 {
     int bus;
@@ -22,47 +41,46 @@ struct Bus
   int route;
 };
  
-//Один узел очереди
+template <class T>
 struct Node
 {
-    Bus *data;
- 
+    T *data;
     Node *next;
     Node *prev;
 };
  
-//Выделение памяти под данные
-Bus * InitData()
+template <class T>
+T * InitData()
 {
-    Bus *tk = new Bus;
+    T *tk = new T;
     tk->name = new char [_maxLengthName];
     return tk;
 }
  
-//Ввод данных
-Bus * EnterData()
+template <class T>
+T * EnterData()
 {
-    Bus *bt = InitData();
+    T *bt = InitData<T>();
     cout<<"Bus = ";     cin>>bt->bus;
     cout<<"Driver (Fname I.O.) = ";     cin>>bt->name>>bt->i>>bt->o;
     cout<<"Route = ";       cin>>bt->route;
     return bt;
 }
  
-//Создание первого узла списка
-Node * First(Bus * tk)
+template <class T>
+Node <T> * First(T * tk)
 {
-    Node * pv= new Node;
+    Node <T> * pv= new Node <T>;
     pv->data = tk;
     pv->next = 0;
     pv->prev = 0;
     return pv;
 }
  
-//Добавление ула в конец списка
-void Add(Node ** pend, Bus *tk)
+template <class T>
+void Add(Node  <T>** pend, T *tk)
 {
-    Node *pv = new Node;
+    Node  <T> *pv = new Node  <T>;
     pv->data = tk;
     pv->next = 0;
     pv->prev = *pend;
@@ -70,10 +88,10 @@ void Add(Node ** pend, Bus *tk)
     *pend = pv;
 }
  
-//Поиск элемента в списке
-Node *Find(Node * const pbeg, int bus)
+template <class T>
+Node  <T> *Find(Node  <T> * const pbeg, int bus)
 {
-    Node *pv = pbeg;
+    Node<T> *pv = pbeg;
     while (pv)
     {
         if (pv->data->bus == bus) break;
@@ -82,10 +100,10 @@ Node *Find(Node * const pbeg, int bus)
     return pv;
 }
  
-//Удаление элемента из списка по коду
-bool Remove(Node **pbeg, Node **pend, int bus)
+template <class T>
+bool Remove(Node  <T> **pbeg, Node  <T> **pend, int bus)
 {
-    if (Node *pkey = Find(*pbeg, bus))
+    if (Node  <T> *pkey = Find(*pbeg, bus))
     {
         if (pkey == *pbeg)
         {
@@ -114,15 +132,16 @@ bool Remove(Node **pbeg, Node **pend, int bus)
     return false;
 }
  
-//Вставка элемента по ключу (Очередь будет упорядоченныя по коду)
-Node * insert (Node ** pbeg, Node **pend, Bus *bk)
+ 
+template <class T>
+Node  <T> * insert (Node  <T> ** pbeg, Node<T>**pend, T *bk)
 {
-    Node *pkey = *pbeg;
+    Node  <T> *pkey = *pbeg;
     if (pkey->data->bus < bk->bus)
     {
         while (pkey->next && pkey->data->bus < bk->bus)
             pkey = pkey->next;
-        Node *pv = new Node;
+        Node<T> *pv = new Node<T>;
         pv->data = bk;
         pv->next = pkey->next;
         pv->prev = pkey;
@@ -134,11 +153,11 @@ Node * insert (Node ** pbeg, Node **pend, Bus *bk)
         return pv;
     }else
     {
-        Node *pv = new Node;
+        Node  <T> *pv = new Node  <T>;
         pv->data = bk;
         pv->next = *pbeg;
         pv->prev = 0;
-        
+ 
         pkey->prev = pv;
         *pbeg = pv;
         return pv;
@@ -146,10 +165,10 @@ Node * insert (Node ** pbeg, Node **pend, Bus *bk)
     return 0;
 }
  
-//Печать списка
-void Print(Node * const pbeg)
+template <class T>
+void Print(Node  <T> * const pbeg)
 {
-    Node *pv = pbeg;
+    Node  <T> *pv = pbeg;
     if (!pv)
     {
         cout<<" List is empty "<<endl;
@@ -173,11 +192,10 @@ void Print(Node * const pbeg)
     printf("----------------------------------------------\n");
  
 }
- 
-//Поиск записи
-Bus* Search(Node * const pbeg)
+template <class T>
+T* Search(Node  <T> * const pbeg)
 {
-    Node *pv = pbeg;
+    Node  <T> *pv = pbeg;
  
     int bus;
     char date[13];
@@ -186,7 +204,7 @@ Bus* Search(Node * const pbeg)
     {
         if (pv->data->bus == bus)
         {
-            Node *pbeg = First(pv->data);
+            Node<T> *pbeg = First(pv->data);
             Print(pbeg);
       return pbeg->data;
         }
@@ -194,8 +212,8 @@ Bus* Search(Node * const pbeg)
     }
 }
  
-//Обобщил добавление элемента. Если очередт нет - он создаст
-void NodeRead(Node ** pbeg, Node **pend, Bus *bk)
+template <class T>
+void NodeRead(Node  <T> ** pbeg, Node  <T> **pend, T *bk)
 {
 //  Bus *bk = EnterData();
     if (*pbeg)
@@ -207,16 +225,17 @@ void NodeRead(Node ** pbeg, Node **pend, Bus *bk)
     }
 }
  
-void FileRead(Node **pbeg, Node **pend)
+template <class T>
+void FileRead( Node  <T> **pbeg, Node  <T> **pend)
 {
-  char * fname = new char [32];//Это что за конструкция была?
+  char * fname = new char [32];
   strcpy(fname,"test.txt");
   ifstream fin(fname);
  
   while(!fin.eof())
   {
-    
-    Bus *bt = InitData();
+ 
+    Bus *bt = InitData<Bus>();
     fin>>bt->bus;
       fin>>bt->name>>bt->i>>bt->o;
       fin>>bt->route;
@@ -233,12 +252,10 @@ void FileRead(Node **pbeg, Node **pend)
   fin.close();
 }
  
- 
-//Меню
 int main()
 {
-    Node *pbeg=0, *pend=0;
-  Node *rbeg=0, *rend=0;
+  Node<Bus> *pbeg=0, *pend=0;
+  Node<Bus> *rbeg=0, *rend=0;
     int menu,bus;
     do
     {
@@ -253,10 +270,10 @@ int main()
         cout<<" 0 - Exit "<<endl;
         cout<<"Select menu ";
         cin>>menu;
-        switch (menu) 
+        switch (menu)
         {
         case 1:
-      NodeRead(&pbeg,&pend, EnterData());
+      NodeRead(&pbeg,&pend, EnterData<Bus>());
             break;
         case 2:
       cout<<"Bus in park"<<endl;
@@ -268,10 +285,10 @@ int main()
         case 3:{
             cout<<" bus = ";
             cin>>bus;
-            Node *pv = Find(pbeg,bus);
+            Node<Bus> *pv = Find(pbeg,bus);
             if (pv)
             {
-                Node *next = pv->next;
+                Node<Bus> *next = pv->next;
                 pv->next = 0;
                 Print(pv);
                 pv->next = next;
@@ -301,10 +318,9 @@ int main()
         }
     }while (menu);
  
-    //Освобождение памяти
     while (pbeg)
     {
-        Node *pv = pbeg;
+        Node <Bus> *pv = pbeg;
         pbeg = pbeg->next;
         delete pv->data;
         delete pv;
